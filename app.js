@@ -1,65 +1,72 @@
 
-let numeroSecreto = 0;
-let intentos = 0;
-let pastNumbersList = [];
-let maxSecretNumbers = 10;
+let secretNumber = 0; //Var for the secret number
+let tries = 0; //var for the number of tries until finding the correct number
+let pastNumbersList = []; //This list will include the previously generated secret numbers
+let maxSecretNumbers = 10; //This will prevent the app to try generating more secret numbers after the 10th
 
+//This function sets the app to its starting conditions.
 function startingConditions() {
-    asignarTextoElemento('p',`Indica un número del 1 al ${maxSecretNumbers}`);
-    asignarTextoElemento('h1','Juego del número secreto!');
-    numeroSecreto = generarNumeroSecreto();
-    intentos = 1;
-    console.log(numeroSecreto);
+    assignTextElement('p',`Input a number from 1 to ${maxSecretNumbers}`);
+    assignTextElement('h1','Find the secret number!');
+    secretNumber = generateSecretNumber();
+    tries = 1;
+    //console.log(secretNumber); Used for testing. Enable if necessary.
 }
 
-function asignarTextoElemento(elemento, texto) {
-    let elementoHTML = document.querySelector(elemento);
-    elementoHTML.innerHTML = texto;
+//This function is used to change the text displayed on screen.
+function assignTextElement(element, text) {
+    let elementHTML = document.querySelector(element);
+    elementHTML.innerHTML = text;
     return;
 }
 
-function verificarIntento() {
-    let numeroDeUsuario = parseInt(document.getElementById('valorUsuario').value);
+//This function compares the secret and user numbers and change the text on screen according to the results.
+function checkTry() {
+    let userNumber = parseInt(document.getElementById('userValue').value); //parseInt to make sure the user number is not a string
     
-    if (numeroDeUsuario === numeroSecreto) {
-        asignarTextoElemento('p',`You found it! You got it in ${intentos} ${(intentos === 1) ? 'try' : 'tries'}`);
-        document.getElementById('reiniciar').removeAttribute('disabled');
+    if (userNumber === secretNumber) {
+        assignTextElement('p',`You found it! You got it in ${intentos} ${(intentos === 1) ? 'try' : 'tries'}`); //Success message. Fixed the wording problem for singular or multiple tries.
+        document.getElementById('reset').removeAttribute('disabled'); //Enable the reset button only after winning the current game.
     } else {
-        if (numeroDeUsuario > numeroSecreto) {
-            asignarTextoElemento('p',`Sorry, try again. The secret number is lower than ${numeroDeUsuario}`);
+        if (userNumber > secretNumber) { //Failure message + a hint.
+            assignTextElement('p',`Sorry, try again. The secret number is lower than ${userNumber}`);
         } else {
-            asignarTextoElemento('p',`Sorry, try again. The secret number is greater than ${numeroDeUsuario}`);
+            assignTextElement('p',`Sorry, try again. The secret number is greater than ${userNumber}`);
             }
-        intentos++;
-        cleanBox();
+        tries++; //Increase the number of tries to be displayed after winning.
+        clearBox();
         }    
     return;
 }
 
-function cleanBox() {
-    document.querySelector('#valorUsuario').value = '';
+//Just a QoL function so the user doesn't need to manually clear the text box.
+function clearBox() {
+    document.querySelector('#userValue').value = '';
     return;
 } 
 
-function generarNumeroSecreto() {
+//This function generate and returns a unique secret number.
+function generateSecretNumber() {
     let generatedNumber = Math.floor(Math.random()*maxSecretNumbers)+1;
-    if (pastNumbersList.length == maxSecretNumbers) {
-        asignarTextoElemento('p','All possible numbers were already used');
+    if (pastNumbersList.length == maxSecretNumbers) { //This makes sure the app can't try generating new numbers after already using all 10 numbers.
+        assignTextElement('p','All possible numbers were already used'); //True end message.
     } else {   
-        if (pastNumbersList.includes(generatedNumber)) {
-            return generarNumeroSecreto();
+        if (pastNumbersList.includes(generatedNumber)) { 
+            return generateSecretNumber(); //If the generated number was already used the function tries again.
         } else {
             pastNumbersList.push(generatedNumber);
-            return generatedNumber;
+            return generatedNumber; //If the generated number wasn't already used the function returns the new secret number.
         }
     }    
 }
 
+//This function resets the game to be played again.
 function resetGame() {
-    cleanBox();
+    clearBox();
     startingConditions();
-    document.querySelector('#reiniciar').setAttribute('disabled','true');
+    document.querySelector('#reset').setAttribute('disabled','true'); //This dissable the new game button until the user wins again.
 
 }
 
+//Just to start the app.
 startingConditions();
