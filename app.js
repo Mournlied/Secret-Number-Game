@@ -25,7 +25,7 @@ function checkTry() {
     let userNumber = parseInt(document.getElementById('userValue').value); //parseInt to make sure the user number is not a string
     
     if (userNumber === secretNumber) {
-        assignTextElement('p',`You found it! You got it in ${intentos} ${(intentos === 1) ? 'try' : 'tries'}`); //Success message. Fixed the wording problem for singular or multiple tries.
+        assignTextElement('p',`You found it! You got it in ${tries} ${(tries === 1) ? 'try' : 'tries'}`); //Success message. Fixed the wording problem for singular or multiple tries.
         document.getElementById('reset').removeAttribute('disabled'); //Enable the reset button only after winning the current game.
     } else {
         if (userNumber > secretNumber) { //Failure message + a hint.
